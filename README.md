@@ -1,4 +1,4 @@
-# jdbc-bulk-copy
+# jdbc-bulk-copy-update
 
 A clojure program to trace and demonstrate bulk copy-and-update statements in postgresql
 
@@ -24,6 +24,7 @@ You can see the jaegar dashboard in your browser at `http://localhost:16686`
 ## Usage
 
 The project contains a single file with 3 states - server (http server), tracer (jaegar) and a datasource (next.jdbc). The file has comments to,
+ - Start all the 3 states - server, tracer and datasource
  - Create table in the database (the database `bulk_copy_update_test` should be created by you)
  - Create a table called `inventory`
  - Generate master inventory file
@@ -31,9 +32,17 @@ The project contains a single file with 3 states - server (http server), tracer 
  - Generate test files in a folder `update_csv_files`. Each file contains item_id and the updated quantity.
  - Update inventory using the files in folder `update_csv_files` in a concurrent manner.
 
-After you run the command (last command) to update the inventory table, you can go to `http://localhost:16686` and select the service as `bulk-edit`. You should be able to see the traces.
+After you run the command (last command) to update the inventory table, you can go to `http://localhost:16686` and select the service as `bulk-copy-update`. You should be able to see the traces.
 
 ![All traces](readme_resources/all_traces.png)
 
 ![Individual trace](readme_resources/individual_trace.png)
- 
+
+## Http End point
+
+The http server listens at port 8080. The following curl should work
+```
+curl -XPOST  "http://localhost:8080/file" -F file=@update_csv_files/inventory-update-250001.csv
+```
+
+You can run your perf test against the end point and see the traces on jaegar dashboard to look at the performance
