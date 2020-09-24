@@ -58,7 +58,7 @@
 
 (m/defstate tracer
   :start (do (opencensus-clojure.trace/configure-tracer {:probability 1.0})
-             (jaegar/report "bulk-edit"))
+             (jaegar/report "bulk-copy-update"))
   :stop (jaegar/shutdown))
 
 
