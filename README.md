@@ -1,6 +1,12 @@
-# jdbc-bulk-copy-update
+## jdbc-bulk-copy-update
 
 A clojure program to trace and demonstrate bulk copy-and-update statements in postgresql
+
+## Overview
+
+There are real world scenarios where we need to support updating rows in bulk, say, via a CSV file. One such example would be inventory management. The quantity of inventory would need to be updated on a regular basis. The problem comes when you have the store manager uploading a CSV (with updated inventories) to your application server which then needs to update the quantity in the `inventory` table. This CSV could contain as high as 10K items. 
+<br><br>
+This is an attempt at solving this problem. Instead of sending each update statement one-by-one or constructing a complex query, we can create a temporary table and copy the CSV into the temporary table using JDBC's Copy Manager. Then copy all the data from the temporary table to the `inventory table`. Drop the temporary table.
 
 ## Prerequisite
 
@@ -29,7 +35,7 @@ The project contains a single file with 3 states - server (http server), tracer 
  - Create a table called `inventory`
  - Generate master inventory file
  - Copy the master inventory file into table `inventory`
- - Generate test files in a folder `update_csv_files`. Each file contains item_id and the updated quantity.
+ - Generate test files in a folder `update_csv_files`. Each file contains item_id and the updated quantity separated by a comma. Each of these files contains 50K items.
  - Update inventory using the files in folder `update_csv_files` in a concurrent manner.
 
 After you run the command (last command) to update the inventory table, you can go to `http://localhost:16686` and select the service as `bulk-copy-update`. You should be able to see the traces.
