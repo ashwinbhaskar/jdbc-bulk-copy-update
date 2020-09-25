@@ -67,14 +67,14 @@
   (mount.core/start #'ds #'server #'tracer)
 
   ;; generate a master inventory file called all-inventory.csv file which contains a million inventories with their quantities
-  (with-open [w (clojure.java.io/writer "/Users/ashwinbhaskar/source_code/jdbc-bulk-copy/all-inventory.csv")]
+  (with-open [w (clojure.java.io/writer "/Users/foo_user/jdbc-bulk-copy/all-inventory.csv")]
     (doseq [i (range 1 1000000)]
       (.write writer (str i "," (rand-int 1000) "\n"))))
 
   ;; generate files in the update_csv_files folder
   (doseq [ps (->> (range 1 1000000)
                   (partition 50000 50000))]
-    (with-open [w (clojure.java.io/writer (format "/Users/ashwinbhaskar/source_code/jdbc-bulk-copy/update_csv_files/inventory-update-%d.csv" (first ps)))]
+    (with-open [w (clojure.java.io/writer (format "/Users/foo_user/jdbc-bulk-copy/update_csv_files/inventory-update-%d.csv" (first ps)))]
       (run! #(.write w (str % "," (rand-int 1000) "\n")) ps)))
 
   ;; Create table inventory
@@ -84,10 +84,10 @@
   (let [copy-statement "copy inventory from STDIN delimiter ',' CSV"
         manager        (-> (j/get-connection ds)
                            CopyManager.)]
-    (with-open [r (clojure.java.io/reader "/Users/ashwinbhaskar/source_code/jdbc-bulk-copy/all-inventory.csv")]
+    (with-open [r (clojure.java.io/reader "/Users/foo_user/jdbc-bulk-copy/all-inventory.csv")]
       (.copyIn manager copy-statement r)))
 
   ;; update inventory concurrently using files from update_csv_files folder
-  (doseq [f (-> (clojure.java.io/file "/Users/ashwinbhaskar/source_code/jdbc-bulk-copy/update_csv_files")
+  (doseq [f (-> (clojure.java.io/file "/Users/foo_user/jdbc-bulk-copy/update_csv_files")
                 file-seq)]
     (future (update-inventory f))))
